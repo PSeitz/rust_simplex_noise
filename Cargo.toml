@@ -1,6 +1,6 @@
 [package]
 authors = ["Pascal Seitz <pascal.seitz@gmail.com>"]
-name = "rust_simplex_noise"
+name = "simplex_noise"
 version = "0.1.0"
 [dependencies]
 lazy_static = "1.0.0"

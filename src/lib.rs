@@ -1,15 +1,29 @@
 #![feature(test)]
-///
-/// A speed-improved perlin and simplex noise algorithm for 2D and 3D.
-///
-/// Based on example code by Stefan Gustavson (stegu@itn.liu.se).
-/// Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
-/// Better rank ordering method by Stefan Gustavson in 2012.
-///
-/// This code was placed in the public domain by its original author,
-/// Stefan Gustavson. You may use it as you see fit, but
-/// attribution is appreciated.
-///
+
+//!
+//! A speed-improved perlin and simplex noise algorithm for 2D and 3D.
+//!
+//! Based on example code by Stefan Gustavson (stegu@itn.liu.se).
+//! Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
+//! Better rank ordering method by Stefan Gustavson in 2012.
+//!
+//! This code was placed in the public domain by its original author,
+//! Stefan Gustavson. You may use it as you see fit, but
+//! attribution is appreciated.
+
+//! ### Examples
+//!
+//! ```rust
+//! extern crate simplex_noise;
+//! fn main() {
+//!     let simplex = simplex_noise::Simplex::new(10.);
+//!     assert_eq!(simplex.simplex2(10., 10.), -0.44912308);
+//!     assert_eq!(simplex.simplex3(100., 100., 50.), -0.8679863);
+//! }
+//! ```
+//!
+
+
 
 #[macro_use]
 extern crate lazy_static;
@@ -92,7 +106,7 @@ impl Simplex {
     }
 
     /// This isn't a very good seeding function, but it works ok. It supports 2^16
-    /// different seed values. Write something better if you need more seeds.
+    /// different seed values. Feel free to create a pull-request, with more seeds.
     /// Values between 0-1 get mapped to 0-2^16
     pub fn seed(&mut self, mut seed: f32) {
         if seed > 0.0 && seed < 1.0 {
@@ -107,7 +121,7 @@ impl Simplex {
 
         let el = seed as u32;
         for i in 0..256 {
-            
+
             let v = if (i & 1) != 0 {
                 P[i] ^ (el & 255)
             } else {
@@ -123,7 +137,6 @@ impl Simplex {
 
     /// 2D simplex noise, for x,y coordinates
     pub fn simplex2(&self, xin: f32, yin:f32) -> f32 {
-        
         // Skew the input space to determine which simplex cell we're in
         let s = (xin + yin) * F2; // Hairy factor for 2D
         let i = (xin + s).floor() as  u32;
@@ -181,7 +194,7 @@ impl Simplex {
         return 70. * (n0 + n1 + n2);
     }
 
-    // 3D simplex noise
+    // 3D simplex noise, for x,y,z coordinates
     pub fn simplex3(&self, xin: f32, yin: f32, zin: f32) -> f32 {
         let (n0, n1, n2, n3); // Noise contributions from the four corners
 
