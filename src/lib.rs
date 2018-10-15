@@ -88,10 +88,19 @@ fn lerp(a: f32, b: f32, t: f32) -> f32 {
     (1. - t) * a + t * b
 }
 
+
+#[derive(Clone, Copy)]
 pub struct Simplex {
     // To remove the need for index wrapping, double the permutation table length
     perm: [u8;512],
     grad_p: [Grad;512],
+}
+
+impl std::fmt::Debug for Simplex {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        self.perm[..6].fmt(formatter)?;
+        self.grad_p[..6].fmt(formatter)
+    }
 }
 
 impl Simplex {
@@ -321,6 +330,37 @@ fn test_simplex() {
 fn bench_simplex2(b: &mut test::Bencher) {
     let simplex = Simplex::new(10.);
     b.iter(|| simplex.simplex2(10.2, 10.2))
+}
+#[bench]
+fn bench_simplex2_1000_1000(b: &mut test::Bencher) {
+    let simplex = Simplex::new(10.);
+    b.iter(|| {
+        let mut vecco = vec![];
+        vecco.reserve(1001*1001);
+        for x in 0..1000 {
+            for y in 0..1000 {
+                vecco.push(simplex.simplex2(x as f32, y as f32));
+            }
+        }
+        vecco
+        
+    })
+}
+#[bench]
+fn bench_simplex3_1000_1000(b: &mut test::Bencher) {
+    let simplex = Simplex::new(10.);
+    b.iter(|| {
+        let mut el=0.;
+        for x in 0..64 {
+            for y in 0..64 {
+                for z in 0..64 {
+                    el = simplex.simplex3(x as f32, y as f32, z as f32);
+                }
+            }
+        }
+        el
+        
+    })
 }
 #[bench]
 fn bench_simplex3(b: &mut test::Bencher) {
